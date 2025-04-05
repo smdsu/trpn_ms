@@ -1,0 +1,2 @@
+APP_NAME = "Tron MS"
+VERSION = "v0.0.1"

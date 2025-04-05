@@ -1,7 +1,9 @@
-from decouple import config
-import pydantic
+from pydantic_settings import BaseSettings
 
-class Settings(pydantic.BaseSettings):
+from decouple import config
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+
+class Settings(BaseSettings):
     APP_NAME: str = "Tron MS"
     VERSION: str = "v0.0.1"
     TIMEZONE: str = "UTC"
@@ -23,3 +25,7 @@ def get_db_url():
         f"{settings.DB_PASSWORD}@{settings.DB_HOST}:"
         f"{settings.DB_PORT}/{settings.DB_NAME}"
     )
+
+DATABASE_URL: str = get_db_url()
+engine = create_async_engine(DATABASE_URL)
+async_session = async_sessionmaker(engine, expire_on_commit=False)

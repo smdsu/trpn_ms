@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings
 from decouple import config
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
+
 class Settings(BaseSettings):
     APP_NAME: str = "Tron MS"
     VERSION: str = "v0.0.1"
@@ -24,12 +25,14 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
+
 def get_db_url():
     return (
         f"postgresql+asyncpg://{settings.DB_USER}:"
         f"{settings.DB_PASSWORD}@{settings.DB_HOST}:"
         f"{settings.DB_PORT}/{settings.DB_NAME}"
     )
+
 
 DATABASE_URL: str = get_db_url()
 engine = create_async_engine(DATABASE_URL)

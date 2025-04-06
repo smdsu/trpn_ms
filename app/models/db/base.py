@@ -3,7 +3,12 @@ from typing import Annotated
 
 from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncAttrs
-from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    declared_attr,
+    Mapped,
+    mapped_column
+)
 
 
 int_pk = Annotated[
@@ -29,6 +34,7 @@ str_null_true = Annotated[
     str,
     mapped_column(nullable=True)
 ]
+
 
 class Base(AsyncAttrs, DeclarativeBase):
     __abstract__ = True

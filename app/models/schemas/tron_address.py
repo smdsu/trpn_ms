@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class STronAddress(BaseModel):
-    model_config = ConfigDict(from_attributes=True)    
+    model_config = ConfigDict(from_attributes=True)
     id: int | None = Field(None, description="ID")
     address: str | None = Field(None, description="TRON wallet address")
     bandwidth: int = Field(..., description="Bandwidth")

@@ -4,7 +4,7 @@ from sqlalchemy.future import select
 from sqlalchemy import update as sqlalchemy_update, delete as sqlalchemy_delete
 from sqlalchemy.exc import SQLAlchemyError
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from fastapi.logger import logger
 from fastapi import HTTPException
@@ -21,7 +21,9 @@ class BaseDAO:
                 result = await session.execute(query)
                 return result.scalars().all()
         except Exception as e:
-            logger.error(f"Error finding all for {cls.model.__tablename__}: {str(e)}")
+            logger.error(
+                f"Error finding all for {cls.model.__tablename__}: {str(e)}"
+            )
             raise HTTPException(
                 status_code=500,
                 detail=f"Error finding all, {str(e)}"
@@ -75,7 +77,10 @@ class BaseDAO:
                     return e
                 return new_instance
         except Exception as e:
-            logger.error(f"Error adding to {cls.model.__tablename__}: {str(e)}")
+            logger.error(
+                f"Error adding to {cls.model.__tablename__}:"
+                f"{str(e)}"
+            )
             raise HTTPException(
                 status_code=500,
                 detail=f"Error adding to {cls.model.__tablename__}, {str(e)}"
@@ -89,7 +94,8 @@ class BaseDAO:
                     query = (
                         sqlalchemy_update(cls.model)
                         .where(
-                            *[getattr(cls.model, k) == v for k, v in filter_by.items()]
+                            *[getattr(cls.model, k) == v
+                              for k, v in filter_by.items()]
                         )
                         .values(**values)
                         .execution_options(synchronize_session="fetch")
@@ -112,7 +118,9 @@ class BaseDAO:
     @classmethod
     async def delete(cls, delete_all: bool = False, **filter_by):
         if not delete_all and not filter_by:
-            raise ValueError("You must specify at least one parameter for deletion")
+            raise ValueError(
+                "You must specify at least one parameter for deletion"
+            )
         try:
             async with async_session() as session:
                 async with session.begin():
@@ -125,10 +133,15 @@ class BaseDAO:
                     raise e
                 return result.rowcount
         except Exception as e:
-            logger.error(f"Error deleting from {cls.model.__tablename__}: {str(e)}")
+            logger.error(
+                f"Error deleting from {cls.model.__tablename__}:"
+                f"{str(e)}")
             raise HTTPException(
                 status_code=500,
-                detail=f"Error deleting from {cls.model.__tablename__}, {str(e)}"
+                detail=(
+                    f"Error deleting from {cls.model.__tablename__}:"
+                    f"{str(e)}"
+                )
             ) from e
 
     @classmethod
@@ -144,16 +157,20 @@ class BaseDAO:
                 query = select(cls.model).filter_by(**filter_by)
 
                 if start_time:
-                    query = query.where(getattr(cls.model, param) >= start_time)
+                    query = query.where(
+                        getattr(cls.model, param) >= start_time
+                    )
                 if end_time:
-                    query = query.where(getattr(cls.model, param) <= end_time)
+                    query = query.where(
+                        getattr(cls.model, param) <= end_time
+                    )
 
             result = await session.execute(query)
             return result.scalars().all()
         except Exception as e:
             logger.error(
-                f"Error finding all in time range for {cls.model.__tablename__}:"
-                f"{str(e)}"
+                f"Error finding all in time range for "
+                f"{cls.model.__tablename__}: {str(e)}"
             )
             raise HTTPException(
                 status_code=500,
@@ -178,8 +195,14 @@ class BaseDAO:
                         raise e
                     return result.rowcount
         except Exception as e:
-            logger.error(f"Error bulk inserting to {cls.model.__tablename__}: {str(e)}")
+            logger.error(
+                f"Error bulk inserting to {cls.model.__tablename__}:"
+                f"{str(e)}"
+            )
             raise HTTPException(
                 status_code=500,
-                detail=f"Error bulk inserting to {cls.model.__tablename__}, {str(e)}"
+                detail=(
+                    f"Error bulk inserting to {cls.model.__tablename__},"
+                    f"{str(e)}"
+                )
             ) from e

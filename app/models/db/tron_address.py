@@ -14,4 +14,3 @@ class TronAddress(Base):
 
     def __repr__(self) -> str:
         return f"<TronAddress({self.address})>"
-

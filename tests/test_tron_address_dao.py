@@ -16,28 +16,29 @@ async def test_tron_address_add():
     test_balance = 1000000
     test_bandwidth = 5000
     test_energy = 2000
-    
+
     result_obj = TronAddress()
     result_obj.address = test_address
     result_obj.balance = test_balance
     result_obj.bandwidth = test_bandwidth
     result_obj.energy = test_energy
-    
-    with patch('app.dao.base.BaseDAO.add', new=AsyncMock(return_value=result_obj)) as mock_add:
+
+    with patch('app.dao.base.BaseDAO.add',
+               new=AsyncMock(return_value=result_obj)) as mock_add:
         result = await TronAddressDAO.add(
             address=test_address,
             balance=test_balance,
             bandwidth=test_bandwidth,
             energy=test_energy
         )
-        
+
         mock_add.assert_called_once_with(
-            address=test_address, 
-            balance=test_balance, 
-            bandwidth=test_bandwidth, 
+            address=test_address,
+            balance=test_balance,
+            bandwidth=test_bandwidth,
             energy=test_energy
         )
-        
+
         assert result == result_obj
         assert result.address == test_address
         assert result.balance == test_balance
@@ -55,9 +56,11 @@ async def test_tron_address_add_failure():
     test_balance = 1000000
     test_bandwidth = 5000
     test_energy = 2000
-    
-    with patch('app.dao.base.BaseDAO.add', 
-            new=AsyncMock(side_effect=SQLAlchemyError("DB Error"))) as mock_add:
+
+    with patch('app.dao.base.BaseDAO.add',
+               new=AsyncMock(
+                   side_effect=SQLAlchemyError("DB Error")
+                   )) as mock_add:
         with pytest.raises(Exception):
             await TronAddressDAO.add(
                 address=test_address,
@@ -65,10 +68,10 @@ async def test_tron_address_add_failure():
                 bandwidth=test_bandwidth,
                 energy=test_energy
             )
-            
+
         mock_add.assert_called_once_with(
-            address=test_address, 
-            balance=test_balance, 
-            bandwidth=test_bandwidth, 
+            address=test_address,
+            balance=test_balance,
+            bandwidth=test_bandwidth,
             energy=test_energy
-        ) 
+        )

@@ -1,4 +1,4 @@
-from app.core.config import async_session_maker
+from app.core.config import async_session
 from sqlalchemy import insert
 from sqlalchemy.future import select
 from sqlalchemy import update as sqlalchemy_update, delete as sqlalchemy_delete
@@ -16,7 +16,7 @@ class BaseDAO:
     @classmethod
     async def find_all(cls, **filter_by):
         try:
-            async with async_session_maker() as session:
+            async with async_session() as session:
                 query = select(cls.model).filter_by(**filter_by)
                 result = await session.execute(query)
                 return result.scalars().all()
@@ -30,7 +30,7 @@ class BaseDAO:
     @classmethod
     async def find_one_or_none_by_id(cls, data_id: int):
         try:
-            async with async_session_maker() as session:
+            async with async_session() as session:
                 query = select(cls.model).filter_by(id=data_id)
                 result = await session.execute(query)
                 return result.scalar_one_or_none()
@@ -47,7 +47,7 @@ class BaseDAO:
     @classmethod
     async def find_one_or_none_by_filter(cls, **filter_by):
         try:
-            async with async_session_maker() as session:
+            async with async_session() as session:
                 query = select(cls.model).filter_by(**filter_by)
                 result = await session.execute(query)
                 return result.scalar_one_or_none()
@@ -64,7 +64,7 @@ class BaseDAO:
     @classmethod
     async def add(cls, **values):
         try:
-            async with async_session_maker() as session:
+            async with async_session() as session:
                 async with session.begin():
                     new_instance = cls.model(**values)
                 session.add(new_instance)
@@ -84,7 +84,7 @@ class BaseDAO:
     @classmethod
     async def update(cls, filter_by, **values):
         try:
-            async with async_session_maker() as session:
+            async with async_session() as session:
                 async with session.begin():
                     query = (
                         sqlalchemy_update(cls.model)
@@ -114,7 +114,7 @@ class BaseDAO:
         if not delete_all and not filter_by:
             raise ValueError("You must specify at least one parameter for deletion")
         try:
-            async with async_session_maker() as session:
+            async with async_session() as session:
                 async with session.begin():
                     query = sqlalchemy_delete(cls.model).filter_by(**filter_by)
                     result = await session.execute(query)
@@ -140,7 +140,7 @@ class BaseDAO:
         **filter_by
     ):
         try:
-            async with async_session_maker() as session:
+            async with async_session() as session:
                 query = select(cls.model).filter_by(**filter_by)
 
                 if start_time:
@@ -167,7 +167,7 @@ class BaseDAO:
     @classmethod
     async def bulk_insert(cls, data: list[dict]):
         try:
-            async with async_session_maker() as session:
+            async with async_session() as session:
                 async with session.begin():
                     query = insert(cls.model).values(data)
                     result = await session.execute(query)

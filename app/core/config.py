@@ -1,3 +1,5 @@
+import logging
+
 from pydantic_settings import BaseSettings
 
 from decouple import config
@@ -9,6 +11,9 @@ class Settings(BaseSettings):
     TIMEZONE: str = "UTC"
     DESCRIPTION: str | None = None
     DEBUG: bool = False
+
+    LOG_LEVEL: int = logging.INFO
+    LOGGERS: list[str] = ["uvicorn", "sqlalchemy"]
 
     DB_HOST: str = config("DB_HOST")
     DB_PORT: int = config("DB_PORT")

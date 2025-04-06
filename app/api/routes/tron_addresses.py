@@ -15,14 +15,10 @@ router = fastapi.APIRouter(prefix="/tron", tags=["tron"])
 @router.post("/get-address-info", response_model=STronAddress)
 async def get_address_info(address: str) -> STronAddress:
     try:
-        address_info = await TronAddressDAO.find_one_or_none_by_filter(address=address)
-        if address_info:
-            return address_info
-        else:
-            address_info = await TronService.get_address_info(address)
-            await TronAddressDAO.add(address=address, **address_info)
-            address_info['address'] = address
-            return address_info
+        address_info = await TronService.get_address_info(address)
+        await TronAddressDAO.add(address=address, **address_info)
+        address_info['address'] = address
+        return address_info
     except AddressNotFound:
         raise fastapi.HTTPException(status_code=404, detail=f'Address not found: {address}')
     except Exception as e:

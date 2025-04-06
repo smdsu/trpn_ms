@@ -21,6 +21,7 @@ async def get_address_info(address: str) -> STronAddress:
         else:
             address_info = await TronService.get_address_info(address)
             await TronAddressDAO.add(address=address, **address_info)
+            address_info['address'] = address
             return address_info
     except AddressNotFound:
         raise fastapi.HTTPException(status_code=404, detail=f'Address not found: {address}')
@@ -32,4 +33,3 @@ async def get_address_info(address: str) -> STronAddress:
 async def get_all_addresses() -> Page[STronAddress]:
     addresses = await TronAddressDAO.find_all()
     return paginate(addresses)
-
